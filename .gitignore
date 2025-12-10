@@ -53,6 +53,8 @@ crashlytics-build.properties
 
 # Visual Studio cache directory
 .vs/
+*.csproj
+*.sln
 
 # Gradle cache
 .gradle/
