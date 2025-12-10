@@ -1,0 +1,214 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+/// <summary>
+/// 库存网格互动控制器
+/// </summary>
+public class InventoryController : MonoBehaviour
+{
+    [SerializeField] private List<ItemData> items;
+    [SerializeField] private GameObject inventoryItemPrefab;
+    [SerializeField] private Transform canvasTransform;
+    
+    private ItemGrid selectedItemGrid;
+    public ItemGrid SelectedItemGrid 
+    {
+         get => selectedItemGrid; 
+         set {
+            selectedItemGrid = value; 
+            inventoryHighlight.SetParent(value);
+        }
+    }
+    private InventoryItem selectedItem;
+    private InventoryItem overlarpItem;
+    private InventoryItem ItemToHighlight;
+    private RectTransform rectTransform;
+    private InventoryHighlight inventoryHighlight;
+    private Vector2Int oldPositionOnGrid;
+
+    private void Awake()
+    {
+        inventoryHighlight = GetComponent<InventoryHighlight>();
+    }
+
+
+    private void Update()
+    {
+        DragSelectItem();
+        if (selectedItemGrid == null) 
+        {
+            inventoryHighlight.Show(false);
+            return;
+        }
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            InsertRandomItem();
+        }
+       
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            Debug.Log("生成随机物品");
+            CreateRandomItem();
+        }
+        HandleHighlight();
+        if(Input.GetMouseButtonDown(0))
+        {
+            LeftMousePressed();
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            Vector2Int tileGridPosition = selectedItemGrid.GetTileGridPosition(Input.mousePosition);
+            LogGridInfo(tileGridPosition);
+        }
+
+    }
+
+    private void InsertRandomItem()
+    {
+        if(selectedItemGrid == null) return;
+        CreateRandomItem();
+        InventoryItem itemToInsert = selectedItem;
+        selectedItem = null;
+        InsertItem(itemToInsert);
+    }
+
+    private void InsertItem(InventoryItem itemToInsert)
+    {
+        Vector2Int? posOnGrid = selectedItemGrid.FindSpaceForObject(itemToInsert);
+        if (posOnGrid == null)
+        {
+            Destroy(itemToInsert.gameObject);
+            return;
+        }
+        selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
+    }
+
+    /// <summary>
+    /// 处理高亮
+    /// </summary>
+    private void HandleHighlight()
+    {            
+        Vector2Int positionOnGrid = GetTileGridPosition();
+
+        if(positionOnGrid == oldPositionOnGrid) return;
+        oldPositionOnGrid = positionOnGrid;
+
+        if (selectedItem == null)
+        {
+            ItemToHighlight = selectedItemGrid.GetItem(positionOnGrid.x, positionOnGrid.y);
+
+            if (ItemToHighlight != null)
+            {
+                inventoryHighlight.Show(true);
+                inventoryHighlight.SetSize(ItemToHighlight);
+                inventoryHighlight.SetPosition(selectedItemGrid, ItemToHighlight);
+            }
+            else
+            {
+                inventoryHighlight.Show(false);
+            }          
+        }
+        else
+        {
+            inventoryHighlight.Show(selectedItemGrid.BoundryCheck(
+                positionOnGrid.x, 
+                positionOnGrid.y, 
+                selectedItem.itemData.width, 
+                selectedItem.itemData.height
+                ));
+            inventoryHighlight.SetSize(selectedItem);
+            inventoryHighlight.SetPosition(selectedItemGrid, selectedItem, positionOnGrid.x, positionOnGrid.y);
+            
+        }
+    }
+
+    /// <summary>
+    /// 拖拽选中物品
+    /// </summary>
+    private void DragSelectItem()
+    {
+        if (selectedItem == null) return;
+        rectTransform.position = Input.mousePosition;
+    }
+    /// <summary>
+    /// 鼠标左键按下
+    /// </summary>
+    private void LeftMousePressed()
+    {
+        Vector2Int tileGridPosition = GetTileGridPosition();
+
+        if (selectedItem != null)
+        {
+            PlaceItem(tileGridPosition);
+        }
+        else
+        {
+            PickUpItem(tileGridPosition);
+        }
+    }
+
+    private Vector2Int GetTileGridPosition()
+    {
+        Vector2 position = Input.mousePosition;
+        if (selectedItem != null)
+        {
+            position.x -= (selectedItem.itemData.width - 1) * ItemGrid.GetSimpleTileWidth() / 2;
+            position.y += (selectedItem.itemData.height - 1) * ItemGrid.GetSimpleTileHeight() / 2;
+        }
+        // 获取鼠标在tile上的位置
+        return selectedItemGrid.GetTileGridPosition(position);;
+    }
+
+    /// <summary>
+    /// 拾取物品
+    /// </summary>
+    private void PickUpItem(Vector2Int tileGridPosition)
+    {
+        selectedItem = selectedItemGrid.PickUpItem(tileGridPosition.x, tileGridPosition.y);
+        if(selectedItem != null)
+        {
+            rectTransform = selectedItem.GetComponent<RectTransform>();
+        }
+    }
+    /// <summary>
+    /// 放置物品
+    /// </summary>
+    private void PlaceItem(Vector2Int tileGridPosition)
+    {
+        rectTransform = selectedItem.GetComponent<RectTransform>();
+        bool complete = selectedItemGrid.PlaceItem(selectedItem, tileGridPosition.x, tileGridPosition.y, ref overlarpItem);
+        if (complete)
+        {
+            selectedItem = null;
+            if(overlarpItem != null)
+            {
+                selectedItem = overlarpItem;
+                overlarpItem = null;
+                rectTransform = selectedItem.GetComponent<RectTransform>();
+                
+            }
+        }
+        
+    }
+
+    void CreateRandomItem()
+    {
+        InventoryItem inventoryItem = Instantiate(inventoryItemPrefab).GetComponent<InventoryItem>();
+        selectedItem = inventoryItem;
+
+        rectTransform = inventoryItem.GetComponent<RectTransform>();
+        rectTransform.SetParent(canvasTransform);
+
+        int selectedItemID = UnityEngine.Random.Range(0, items.Count);
+        inventoryItem.Set(items[selectedItemID]);
+        
+    }
+    private void LogGridInfo(Vector2Int tileGridPosition)
+    {
+        selectedItemGrid.LogGridItemInfo(tileGridPosition);
+    }
+}
