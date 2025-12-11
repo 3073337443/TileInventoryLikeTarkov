@@ -56,6 +56,14 @@ public class InventoryController : MonoBehaviour
             Debug.Log("生成随机物品");
             CreateRandomItem();
         }
+        if(Input.GetKeyDown(KeyCode.A))
+        {
+            CreateAllItem();
+        }
+        if(Input.GetKeyDown(KeyCode.D))
+        {
+            DeleteItem();
+        }
         HandleHighlight();
         if(Input.GetMouseButtonDown(0))
         {
@@ -204,7 +212,12 @@ public class InventoryController : MonoBehaviour
         }
         
     }
-
+    void DeleteItem()
+    {
+        if (selectedItem == null) return;
+        Destroy(selectedItem.gameObject);
+        selectedItem = null;
+    }
     void CreateRandomItem()
     {
         InventoryItem inventoryItem = Instantiate(inventoryItemPrefab).GetComponent<InventoryItem>();
@@ -217,6 +230,29 @@ public class InventoryController : MonoBehaviour
         int selectedItemID = UnityEngine.Random.Range(0, ItemDataManager.Instance.itemDataList.Count);; // 随机生成物品id，从0到物品列表的长度之间随机生成一个数值，作为物品id。
         inventoryItem.Set(ItemDataManager.Instance.itemDataList[selectedItemID]); // 根据物品id获取物品数据，并设置物品。
         
+    }
+    void CreateAllItem()
+    {
+        if (selectedItemGrid == null) return;
+
+        for (int i = 0; i < ItemDataManager.Instance.itemDataList.Count; i++)
+        {
+            // 为每个物品创建新的实例
+            InventoryItem inventoryItem = Instantiate(inventoryItemPrefab).GetComponent<InventoryItem>();
+
+            rectTransform = inventoryItem.GetComponent<RectTransform>();
+            rectTransform.SetParent(canvasTransform);
+            rectTransform.SetAsLastSibling();
+
+            // 设置物品数据
+            inventoryItem.Set(ItemDataManager.Instance.itemDataList[i]);
+
+            // 插入物品到网格
+            InsertItem(inventoryItem);
+        }
+
+        // 清空选中物品，因为所有物品都已放置
+        selectedItem = null;
     }
     private void LogGridInfo(Vector2Int tileGridPosition)
     {

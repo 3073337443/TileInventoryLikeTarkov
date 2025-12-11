@@ -49,14 +49,9 @@ public class ItemDataManager : Singleton<ItemDataManager>
 
         Quality itemQuality = ParseQuality(qualityStr);
 
-        ItemData itemData = null;
-        itemData = new ItemData(id, name, value, itemQuality, width, height, spritePath);
+        ItemData itemData = new ItemData(id, name, value, itemQuality, width, height, spritePath);
         itemDataList.Add(itemData);
-        if(itemData != null)
-        {
-            LogParsedItem(itemData);
-            itemDataList.Add(itemData);
-        }
+        LogParsedItem(itemData);
     }
 
     private void LogParsedItem(ItemData itemData)

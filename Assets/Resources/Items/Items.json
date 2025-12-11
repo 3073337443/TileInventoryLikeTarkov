@@ -2,15 +2,78 @@
     "items": [
         {
             "id": 0,
-            "name": "非洲之星",
+            "name": "ECMO",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 3,
+            "height": 3,
+            "spritePath": "ItemIcon/ECMO"
+        },
+        {
+            "id": 1,
+            "name": "万金泪冠",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 3,
+            "height": 3,
+            "spritePath": "ItemIcon/万金泪冠"
+        },
+        {
+            "id": 2,
+            "name": "克小圈",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 2,
+            "spritePath": "ItemIcon/克小圈"
+        },
+        {
+            "id": 3,
+            "name": "勋章",
             "value": 10,
             "qualityStr": "rare",
             "width": 1,
             "height": 1,
-            "spritePath": "ItemIcon/非洲之星"
+            "spritePath": "ItemIcon/勋章"
         },
         {
-            "id": 1,
+            "id": 4,
+            "name": "压力",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 2,
+            "spritePath": "ItemIcon/压力"
+        },
+        {
+            "id": 5,
+            "name": "吴彦祖之镜",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 1,
+            "spritePath": "ItemIcon/吴彦祖之镜"
+        },
+        {
+            "id": 6,
+            "name": "天圆地方",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 2,
+            "height": 2,
+            "spritePath": "ItemIcon/天圆地方"
+        },
+        {
+            "id": 7,
+            "name": "座钟",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 2,
+            "height": 2,
+            "spritePath": "ItemIcon/座钟"
+        },
+        {
+            "id": 8,
             "name": "桂冠",
             "value": 10,
             "qualityStr": "rare",
@@ -19,22 +82,166 @@
             "spritePath": "ItemIcon/桂冠"
         },
         {
-            "id": 2,
-            "name": "天圆地方",
+            "id": 9,
+            "name": "水泥",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 2,
+            "height": 3,
+            "spritePath": "ItemIcon/水泥"
+        },
+        {
+            "id": 10,
+            "name": "海洋之泪",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 1,
+            "spritePath": "ItemIcon/海洋之泪"
+        },
+        {
+            "id": 11,
+            "name": "滑膛枪",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 4,
+            "height": 1,
+            "spritePath": "ItemIcon/滑膛枪"
+        },
+        {
+            "id": 12,
+            "name": "烽火杯",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 3,
+            "spritePath": "ItemIcon/烽火杯"
+        },
+        {
+            "id": 13,
+            "name": "煤气罐",
             "value": 10,
             "qualityStr": "rare",
             "width": 2,
             "height": 2,
-            "spritePath": "ItemIcon/tian"
+            "spritePath": "ItemIcon/煤气罐"
         },
         {
-            "id": 3,
-            "name": "万金泪冠",
+            "id": 14,
+            "name": "牙膏",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 2,
+            "spritePath": "ItemIcon/牙膏"
+        },
+        {
+            "id": 15,
+            "name": "留声机",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 2,
+            "height": 3,
+            "spritePath": "ItemIcon/留声机"
+        },
+        {
+            "id": 16,
+            "name": "炫彩克小圈",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 2,
+            "spritePath": "ItemIcon/炫彩克小圈"
+        },
+        {
+            "id": 17,
+            "name": "白瓷净瓶",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 2,
+            "height": 4,
+            "spritePath": "ItemIcon/白瓷净瓶"
+        },
+        {
+            "id": 18,
+            "name": "纵横",
             "value": 10,
             "qualityStr": "rare",
             "width": 3,
             "height": 3,
-            "spritePath": "ItemIcon/万金泪冠"
+            "spritePath": "ItemIcon/纵横"
+        },
+        {
+            "id": 19,
+            "name": "苹果",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 1,
+            "spritePath": "ItemIcon/苹果"
+        },
+        {
+            "id": 20,
+            "name": "阿米娅",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 2,
+            "spritePath": "ItemIcon/阿米娅"
+        },
+        {
+            "id": 21,
+            "name": "阿米娅_近卫",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 2,
+            "spritePath": "ItemIcon/阿米娅_近卫"
+        },
+        {
+            "id": 22,
+            "name": "非洲之星",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 1,
+            "spritePath": "ItemIcon/非洲之星"
+        },
+        {
+            "id": 23,
+            "name": "马赛克灯台",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 2,
+            "height": 3,
+            "spritePath": "ItemIcon/马赛克灯台"
+        },
+        {
+            "id": 24,
+            "name": "高性能燃料",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 3,
+            "height": 1,
+            "spritePath": "ItemIcon/高性能燃料"
+        },
+        {
+            "id": 25,
+            "name": "总裁卡",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 1,
+            "spritePath": "ItemIcon/总裁卡"
+        },
+        {
+            "id": 26,
+            "name": "特色首饰",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 3,
+            "height": 2,
+            "spritePath": "ItemIcon/特色首饰"
         }
     ]
 }
