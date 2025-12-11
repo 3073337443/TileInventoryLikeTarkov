@@ -77,6 +77,7 @@
     <Compile Include="Assets\PlayerInputAction.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\InventoryItem.cs" />
     <Compile Include="Assets\Scripts\other\Test.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\ItemDataManager.cs" />
     <Compile Include="Assets\Scripts\other\CharacterCollision.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\InventoryController.cs" />
     <Compile Include="Assets\Scripts\other\Bullet.cs" />
