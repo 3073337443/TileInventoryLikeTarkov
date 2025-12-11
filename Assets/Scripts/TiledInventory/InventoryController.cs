@@ -10,7 +10,6 @@ using UnityEngine.UIElements;
 /// </summary>
 public class InventoryController : MonoBehaviour
 {
-    [SerializeField] private List<ItemData> items;
     [SerializeField] private GameObject inventoryItemPrefab;
     [SerializeField] private Transform canvasTransform;
     
@@ -215,8 +214,8 @@ public class InventoryController : MonoBehaviour
         rectTransform.SetParent(canvasTransform);
         rectTransform.SetAsLastSibling();
 
-        int selectedItemID = UnityEngine.Random.Range(0, items.Count);
-        inventoryItem.Set(items[selectedItemID]);
+        int selectedItemID = UnityEngine.Random.Range(0, ItemDataManager.Instance.itemDataList.Count);; // 随机生成物品id，从0到物品列表的长度之间随机生成一个数值，作为物品id。
+        inventoryItem.Set(ItemDataManager.Instance.itemDataList[selectedItemID]); // 根据物品id获取物品数据，并设置物品。
         
     }
     private void LogGridInfo(Vector2Int tileGridPosition)

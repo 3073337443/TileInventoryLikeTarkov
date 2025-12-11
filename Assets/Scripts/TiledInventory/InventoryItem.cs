@@ -37,7 +37,7 @@ public class InventoryItem : MonoBehaviour
     internal void Set(ItemData itemData)
     {
         this.itemData = itemData;
-        GetComponent<UnityEngine.UI.Image>().sprite = itemData.itemIcon;
+        GetComponent<UnityEngine.UI.Image>().sprite = Resources.Load<Sprite>(itemData.spritePath); // 加载物品图片，路径为itemData中的spritePath。
 
         Vector2 size = new Vector2();
         size.x = itemData.width * ItemGrid.GetSimpleTileWidth(); // 使物品在tile的正中央显示

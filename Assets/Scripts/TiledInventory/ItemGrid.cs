@@ -225,7 +225,13 @@ public class ItemGrid : MonoBehaviour
     {
         if(inventoryItemSlot[tileGridPosition.x, tileGridPosition.y] != null)
         {
-            Debug.Log("物品名称：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].itemData.name);
+            Debug.Log(
+                "物品名称：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].itemData.name
+                + " 物品宽度：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].Width
+                + " 物品高度：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].Height
+                + " 物品价值：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].itemData.value
+                + " 物品品质：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].itemData.quality
+                );
         }
         else
         {

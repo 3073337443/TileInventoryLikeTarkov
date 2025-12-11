@@ -1,0 +1,40 @@
+﻿{
+    "items": [
+        {
+            "id": 0,
+            "name": "非洲之星",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 1,
+            "height": 1,
+            "spritePath": "ItemIcon/非洲之星"
+        },
+        {
+            "id": 1,
+            "name": "桂冠",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 2,
+            "height": 1,
+            "spritePath": "ItemIcon/桂冠"
+        },
+        {
+            "id": 2,
+            "name": "天圆地方",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 2,
+            "height": 2,
+            "spritePath": "ItemIcon/tian"
+        },
+        {
+            "id": 3,
+            "name": "万金泪冠",
+            "value": 10,
+            "qualityStr": "rare",
+            "width": 3,
+            "height": 3,
+            "spritePath": "ItemIcon/万金泪冠"
+        }
+    ]
+}
