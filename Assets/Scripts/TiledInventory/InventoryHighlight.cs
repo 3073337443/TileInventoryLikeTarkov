@@ -17,8 +17,8 @@ public class InventoryHighlight : MonoBehaviour
     public void SetSize(InventoryItem targetItem)
     {
         Vector2 size = new Vector2();
-        size.x = targetItem.itemData.width * ItemGrid.GetSimpleTileWidth();
-        size.y = targetItem.itemData.height * ItemGrid.GetSimpleTileHeight();
+        size.x = targetItem.Width * ItemGrid.GetSimpleTileWidth();
+        size.y = targetItem.Height * ItemGrid.GetSimpleTileHeight();
         highlightRectTransform.sizeDelta = size;
     }
     /// <summary>

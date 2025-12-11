@@ -48,7 +48,10 @@ public class InventoryController : MonoBehaviour
         {
             InsertRandomItem();
         }
-       
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            RotateItem();
+        }
         if (Input.GetKeyDown(KeyCode.Q))
         {
             Debug.Log("生成随机物品");
@@ -65,6 +68,12 @@ public class InventoryController : MonoBehaviour
             LogGridInfo(tileGridPosition);
         }
 
+    }
+
+    private void RotateItem()
+    {
+        if (selectedItem == null) return;
+        selectedItem.Rotated();
     }
 
     private void InsertRandomItem()
@@ -117,8 +126,8 @@ public class InventoryController : MonoBehaviour
             inventoryHighlight.Show(selectedItemGrid.BoundryCheck(
                 positionOnGrid.x, 
                 positionOnGrid.y, 
-                selectedItem.itemData.width, 
-                selectedItem.itemData.height
+                selectedItem.Width, 
+                selectedItem.Height
                 ));
             inventoryHighlight.SetSize(selectedItem);
             inventoryHighlight.SetPosition(selectedItemGrid, selectedItem, positionOnGrid.x, positionOnGrid.y);
@@ -156,8 +165,8 @@ public class InventoryController : MonoBehaviour
         Vector2 position = Input.mousePosition;
         if (selectedItem != null)
         {
-            position.x -= (selectedItem.itemData.width - 1) * ItemGrid.GetSimpleTileWidth() / 2;
-            position.y += (selectedItem.itemData.height - 1) * ItemGrid.GetSimpleTileHeight() / 2;
+            position.x -= (selectedItem.Width - 1) * ItemGrid.GetSimpleTileWidth() / 2;
+            position.y += (selectedItem.Height - 1) * ItemGrid.GetSimpleTileHeight() / 2;
         }
         // 获取鼠标在tile上的位置
         return selectedItemGrid.GetTileGridPosition(position);;
@@ -172,6 +181,8 @@ public class InventoryController : MonoBehaviour
         if(selectedItem != null)
         {
             rectTransform = selectedItem.GetComponent<RectTransform>();
+            rectTransform.SetParent(canvasTransform);
+            rectTransform.SetAsLastSibling();
         }
     }
     /// <summary>
@@ -189,7 +200,7 @@ public class InventoryController : MonoBehaviour
                 selectedItem = overlarpItem;
                 overlarpItem = null;
                 rectTransform = selectedItem.GetComponent<RectTransform>();
-                
+                rectTransform.SetAsLastSibling();
             }
         }
         
@@ -202,6 +213,7 @@ public class InventoryController : MonoBehaviour
 
         rectTransform = inventoryItem.GetComponent<RectTransform>();
         rectTransform.SetParent(canvasTransform);
+        rectTransform.SetAsLastSibling();
 
         int selectedItemID = UnityEngine.Random.Range(0, items.Count);
         inventoryItem.Set(items[selectedItemID]);

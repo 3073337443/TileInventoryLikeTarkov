@@ -8,8 +8,31 @@ using UnityEngine.UI;
 public class InventoryItem : MonoBehaviour
 {
     public ItemData itemData;
+    public int Width
+    {
+        get
+        {
+            return rotated ? itemData.height : itemData.width;
+        }
+    }
+    public int Height
+    {
+        get
+        {
+            return rotated ? itemData.width : itemData.height;
+        }
+    }
+
     public int onGridPosX;
     public int onGridPosY;
+    public bool rotated = false;
+
+    internal void Rotated()
+    {
+        rotated = !rotated;
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        rectTransform.rotation = Quaternion.Euler(0, 0, rotated ? 90 : 0);
+    }
 
     internal void Set(ItemData itemData)
     {

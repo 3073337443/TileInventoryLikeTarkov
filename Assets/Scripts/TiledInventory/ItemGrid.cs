@@ -68,12 +68,12 @@ public class ItemGrid : MonoBehaviour
     /// </summary>
     public bool PlaceItem(InventoryItem inventoryItem, int posX, int posY, ref InventoryItem overlarpItem)
     {
-        if (!BoundryCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height))
+        if (!BoundryCheck(posX, posY, inventoryItem.Width, inventoryItem.Height))
         {
             return false;
         }
 
-        if (OverlarpCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height, ref overlarpItem))
+        if (OverlarpCheck(posX, posY, inventoryItem.Width, inventoryItem.Height, ref overlarpItem))
         {
             overlarpItem = null;
             return false;
@@ -94,9 +94,9 @@ public class ItemGrid : MonoBehaviour
         RectTransform itemRectTransform = inventoryItem.GetComponent<RectTransform>();
         itemRectTransform.SetParent(this.rectTransform);
 
-        for (int x = 0; x < inventoryItem.itemData.width; x++)
+        for (int x = 0; x < inventoryItem.Width; x++)
         {
-            for (int y = 0; y < inventoryItem.itemData.height; y++)
+            for (int y = 0; y < inventoryItem.Height; y++)
             {
                 inventoryItemSlot[posX + x, posY + y] = inventoryItem;
             }
@@ -114,8 +114,8 @@ public class ItemGrid : MonoBehaviour
     public Vector2 CalculatePositionOnGrid(InventoryItem inventoryItem, int posX, int posY)
     {
         Vector2 position = new Vector2();
-        position.x = posX * simpleTileWidth + simpleTileWidth * inventoryItem.itemData.width / 2; // 使物品在tile的正中央显示
-        position.y = -(posY * simpleTileHeight + simpleTileHeight * inventoryItem.itemData.height / 2); // 使物品在tile的正中央显示
+        position.x = posX * simpleTileWidth + simpleTileWidth * inventoryItem.Width / 2; // 使物品在tile的正中央显示
+        position.y = -(posY * simpleTileHeight + simpleTileHeight * inventoryItem.Height / 2); // 使物品在tile的正中央显示
         return position;
     }
 
@@ -188,9 +188,9 @@ public class ItemGrid : MonoBehaviour
     /// </summary>
     private void CleanGridReference(InventoryItem item)
     {
-        for (int x = 0; x < item.itemData.width; x++)
+        for (int x = 0; x < item.Width; x++)
         {
-            for (int y = 0; y < item.itemData.height; y++)
+            for (int y = 0; y < item.Height; y++)
             {
                 inventoryItemSlot[item.onGridPosX + x, item.onGridPosY + y] = null;
             }
@@ -254,14 +254,14 @@ public class ItemGrid : MonoBehaviour
     /// <returns>找到空间返回位置坐标，否则返回 null</returns>
     public Vector2Int? FindSpaceForObject(InventoryItem itemToInsert)
     {
-        int width = gridSizeWidth - itemToInsert.itemData.width + 1;
-        int height = gridSizeHeight - itemToInsert.itemData.height + 1;
+        int width = gridSizeWidth - itemToInsert.Width + 1;
+        int height = gridSizeHeight - itemToInsert.Height + 1;
 
         for(int x = 0; x < width; x++)
         {
             for(int y = 0; y < height; y++)
             {
-                if(CheckAvailableSpace(x, y, itemToInsert.itemData.width, itemToInsert.itemData.height)) // 空间可用时返回位置
+                if(CheckAvailableSpace(x, y, itemToInsert.Width, itemToInsert.Height)) // 空间可用时返回位置
                 {
                     return new Vector2Int(x, y);
                 }
