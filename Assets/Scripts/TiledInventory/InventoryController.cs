@@ -1,71 +1,94 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 /// <summary>
 /// 库存网格互动控制器
+/// 使用对象池模式管理物品
 /// </summary>
 public class InventoryController : MonoBehaviour
 {
-    [SerializeField] private GameObject inventoryItemPrefab;
-    [SerializeField] private Transform canvasTransform;
-    
     private ItemGrid selectedItemGrid;
-    public ItemGrid SelectedItemGrid 
+    public ItemGrid SelectedItemGrid
     {
-         get => selectedItemGrid; 
-         set {
-            selectedItemGrid = value; 
-            inventoryHighlight.SetParent(value);
+        get => selectedItemGrid;
+        set
+        {
+            selectedItemGrid = value;
         }
     }
+
     private InventoryItem selectedItem;
     private InventoryItem overlarpItem;
-    private InventoryItem ItemToHighlight;
+    private InventoryItem itemToHighlight;
     private RectTransform rectTransform;
-    private InventoryHighlight inventoryHighlight;
     private Vector2Int oldPositionOnGrid;
 
-    private void Awake()
+    // 对象池引用
+    private InventoryUIPool uiPool;
+
+    // 高亮组件（从对象池获取）
+    private InventoryHighlight inventoryHighlight;
+
+    private void Start()
     {
-        inventoryHighlight = GetComponent<InventoryHighlight>();
+        uiPool = InventoryUIPool.Instance;
+
+        // 从对象池获取高亮
+        inventoryHighlight = uiPool.GetHighlightObject();
     }
 
+    private void OnDestroy()
+    {
+        // 归还高亮到对象池
+        if (uiPool != null && inventoryHighlight != null)
+        {
+            uiPool.ReturnHighlightObject(inventoryHighlight);
+            inventoryHighlight = null;
+        }
+    }
 
     private void Update()
     {
         DragSelectItem();
-        if (selectedItemGrid == null) 
+
+        if (selectedItemGrid == null)
         {
-            inventoryHighlight.Show(false);
+            if (inventoryHighlight != null)
+            {
+                inventoryHighlight.Show(false);
+            }
             return;
         }
+
+        HandleInput();
+        HandleHighlight();
+    }
+
+    /// <summary>
+    /// 处理输入
+    /// </summary>
+    private void HandleInput()
+    {
         if (Input.GetKeyDown(KeyCode.I))
         {
             InsertRandomItem();
         }
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             RotateItem();
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            Debug.Log("生成随机物品");
             CreateRandomItem();
         }
-        if(Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A))
         {
             CreateAllItem();
         }
-        if(Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D))
         {
             DeleteItem();
         }
-        HandleHighlight();
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             LeftMousePressed();
         }
@@ -74,7 +97,6 @@ public class InventoryController : MonoBehaviour
             Vector2Int tileGridPosition = selectedItemGrid.GetTileGridPosition(Input.mousePosition);
             LogGridInfo(tileGridPosition);
         }
-
     }
 
     private void RotateItem()
@@ -85,7 +107,8 @@ public class InventoryController : MonoBehaviour
 
     private void InsertRandomItem()
     {
-        if(selectedItemGrid == null) return;
+        if (selectedItemGrid == null) return;
+
         CreateRandomItem();
         InventoryItem itemToInsert = selectedItem;
         selectedItem = null;
@@ -94,10 +117,12 @@ public class InventoryController : MonoBehaviour
 
     private void InsertItem(InventoryItem itemToInsert)
     {
+        if (itemToInsert == null) return;
+
         Vector2Int? posOnGrid = selectedItemGrid.FindSpaceForObject(itemToInsert);
         if (posOnGrid == null)
         {
-            Destroy(itemToInsert.gameObject);
+            uiPool.ReturnItemObject(itemToInsert);
             return;
         }
         selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
@@ -107,38 +132,39 @@ public class InventoryController : MonoBehaviour
     /// 处理高亮
     /// </summary>
     private void HandleHighlight()
-    {            
+    {
+        if (inventoryHighlight == null) return;
+
         Vector2Int positionOnGrid = GetTileGridPosition();
 
-        if(positionOnGrid == oldPositionOnGrid) return;
+        if (positionOnGrid == oldPositionOnGrid) return;
         oldPositionOnGrid = positionOnGrid;
 
         if (selectedItem == null)
         {
-            ItemToHighlight = selectedItemGrid.GetItem(positionOnGrid.x, positionOnGrid.y);
+            itemToHighlight = selectedItemGrid.GetItem(positionOnGrid.x, positionOnGrid.y);
 
-            if (ItemToHighlight != null)
+            if (itemToHighlight != null)
             {
                 inventoryHighlight.Show(true);
-                inventoryHighlight.SetSize(ItemToHighlight);
-                inventoryHighlight.SetPosition(selectedItemGrid, ItemToHighlight);
+                inventoryHighlight.SetSize(itemToHighlight);
+                inventoryHighlight.SetPosition(selectedItemGrid, itemToHighlight);
             }
             else
             {
                 inventoryHighlight.Show(false);
-            }          
+            }
         }
         else
         {
             inventoryHighlight.Show(selectedItemGrid.BoundryCheck(
-                positionOnGrid.x, 
-                positionOnGrid.y, 
-                selectedItem.Width, 
+                positionOnGrid.x,
+                positionOnGrid.y,
+                selectedItem.Width,
                 selectedItem.Height
-                ));
+            ));
             inventoryHighlight.SetSize(selectedItem);
             inventoryHighlight.SetPosition(selectedItemGrid, selectedItem, positionOnGrid.x, positionOnGrid.y);
-            
         }
     }
 
@@ -150,6 +176,7 @@ public class InventoryController : MonoBehaviour
         if (selectedItem == null) return;
         rectTransform.position = Input.mousePosition;
     }
+
     /// <summary>
     /// 鼠标左键按下
     /// </summary>
@@ -175,8 +202,7 @@ public class InventoryController : MonoBehaviour
             position.x -= (selectedItem.Width - 1) * ItemGrid.GetSimpleTileWidth() / 2;
             position.y += (selectedItem.Height - 1) * ItemGrid.GetSimpleTileHeight() / 2;
         }
-        // 获取鼠标在tile上的位置
-        return selectedItemGrid.GetTileGridPosition(position);;
+        return selectedItemGrid.GetTileGridPosition(position);
     }
 
     /// <summary>
@@ -185,13 +211,13 @@ public class InventoryController : MonoBehaviour
     private void PickUpItem(Vector2Int tileGridPosition)
     {
         selectedItem = selectedItemGrid.PickUpItem(tileGridPosition.x, tileGridPosition.y);
-        if(selectedItem != null)
+        if (selectedItem != null)
         {
             rectTransform = selectedItem.GetComponent<RectTransform>();
-            rectTransform.SetParent(canvasTransform);
-            rectTransform.SetAsLastSibling();
+            uiPool.MoveItemToDragLayer(selectedItem);
         }
     }
+
     /// <summary>
     /// 放置物品
     /// </summary>
@@ -199,61 +225,67 @@ public class InventoryController : MonoBehaviour
     {
         rectTransform = selectedItem.GetComponent<RectTransform>();
         bool complete = selectedItemGrid.PlaceItem(selectedItem, tileGridPosition.x, tileGridPosition.y, ref overlarpItem);
+
         if (complete)
         {
             selectedItem = null;
-            if(overlarpItem != null)
+            if (overlarpItem != null)
             {
                 selectedItem = overlarpItem;
                 overlarpItem = null;
                 rectTransform = selectedItem.GetComponent<RectTransform>();
-                rectTransform.SetAsLastSibling();
+                uiPool.MoveItemToDragLayer(selectedItem);
             }
         }
-        
     }
-    void DeleteItem()
+
+    /// <summary>
+    /// 删除物品
+    /// </summary>
+    private void DeleteItem()
     {
         if (selectedItem == null) return;
-        Destroy(selectedItem.gameObject);
+
+        uiPool.ReturnItemObject(selectedItem);
         selectedItem = null;
     }
-    void CreateRandomItem()
+
+    /// <summary>
+    /// 创建随机物品
+    /// </summary>
+    private void CreateRandomItem()
     {
-        InventoryItem inventoryItem = Instantiate(inventoryItemPrefab).GetComponent<InventoryItem>();
+        InventoryItem inventoryItem = uiPool.GetItemObject();
+        if (inventoryItem == null) return;
+
+        int randomItemID = Random.Range(0, ItemDataManager.Instance.itemDataList.Count);
+        inventoryItem.Set(ItemDataManager.Instance.itemDataList[randomItemID]);
+
+        uiPool.MoveItemToDragLayer(inventoryItem);
+
         selectedItem = inventoryItem;
-
         rectTransform = inventoryItem.GetComponent<RectTransform>();
-        rectTransform.SetParent(canvasTransform);
-        rectTransform.SetAsLastSibling();
-
-        int selectedItemID = UnityEngine.Random.Range(0, ItemDataManager.Instance.itemDataList.Count);; // 随机生成物品id，从0到物品列表的长度之间随机生成一个数值，作为物品id。
-        inventoryItem.Set(ItemDataManager.Instance.itemDataList[selectedItemID]); // 根据物品id获取物品数据，并设置物品。
-        
     }
-    void CreateAllItem()
+
+    /// <summary>
+    /// 创建所有物品
+    /// </summary>
+    private void CreateAllItem()
     {
         if (selectedItemGrid == null) return;
 
         for (int i = 0; i < ItemDataManager.Instance.itemDataList.Count; i++)
         {
-            // 为每个物品创建新的实例
-            InventoryItem inventoryItem = Instantiate(inventoryItemPrefab).GetComponent<InventoryItem>();
-
-            rectTransform = inventoryItem.GetComponent<RectTransform>();
-            rectTransform.SetParent(canvasTransform);
-            rectTransform.SetAsLastSibling();
-
-            // 设置物品数据
-            inventoryItem.Set(ItemDataManager.Instance.itemDataList[i]);
-
-            // 插入物品到网格
-            InsertItem(inventoryItem);
+            InventoryItem inventoryItem = uiPool.GetItemGamObject(ItemDataManager.Instance.itemDataList[i]);
+            if (inventoryItem != null)
+            {
+                InsertItem(inventoryItem);
+            }
         }
 
-        // 清空选中物品，因为所有物品都已放置
         selectedItem = null;
     }
+
     private void LogGridInfo(Vector2Int tileGridPosition)
     {
         selectedItemGrid.LogGridItemInfo(tileGridPosition);

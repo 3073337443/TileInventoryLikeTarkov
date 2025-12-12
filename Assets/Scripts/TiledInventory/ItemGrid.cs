@@ -90,10 +90,9 @@ public class ItemGrid : MonoBehaviour
 
     public void PlaceItem(InventoryItem inventoryItem, int posX, int posY)
     {
-        // 设置网格为物品的父物体，并将物品放置在网格上，设置物品数组的值
         RectTransform itemRectTransform = inventoryItem.GetComponent<RectTransform>();
-        itemRectTransform.SetParent(this.rectTransform);
 
+        // 更新网格数组
         for (int x = 0; x < inventoryItem.Width; x++)
         {
             for (int y = 0; y < inventoryItem.Height; y++)
@@ -105,18 +104,40 @@ public class ItemGrid : MonoBehaviour
         inventoryItem.onGridPosX = posX;
         inventoryItem.onGridPosY = posY;
 
-        // 设置物品的位置
-        Vector2 position = CalculatePositionOnGrid(inventoryItem, posX, posY);
-
-        itemRectTransform.anchoredPosition = position;
+        // 使用世界坐标设置物品位置
+        Vector3 worldPosition = CalculateWorldPosition(inventoryItem, posX, posY);
+        itemRectTransform.position = worldPosition;
     }
 
+    /// <summary>
+    /// 计算物品在网格中的本地位置（相对于网格左上角）
+    /// </summary>
     public Vector2 CalculatePositionOnGrid(InventoryItem inventoryItem, int posX, int posY)
     {
-        Vector2 position = new Vector2();
-        position.x = posX * simpleTileWidth + simpleTileWidth * inventoryItem.Width / 2; // 使物品在tile的正中央显示
-        position.y = -(posY * simpleTileHeight + simpleTileHeight * inventoryItem.Height / 2); // 使物品在tile的正中央显示
+        Vector2 position = new Vector2
+        {
+            x = posX * simpleTileWidth + simpleTileWidth * inventoryItem.Width / 2,
+            y = -(posY * simpleTileHeight + simpleTileHeight * inventoryItem.Height / 2)
+        };
         return position;
+    }
+
+    /// <summary>
+    /// 计算物品的世界坐标位置
+    /// </summary>
+    public Vector3 CalculateWorldPosition(InventoryItem inventoryItem, int posX, int posY)
+    {
+        // 先计算本地位置
+        Vector2 localPosition = CalculatePositionOnGrid(inventoryItem, posX, posY);
+
+        // 转换为世界坐标
+        Vector3 gridWorldPos = rectTransform.position;
+
+        return new Vector3(
+            gridWorldPos.x + localPosition.x,
+            gridWorldPos.y + localPosition.y,
+            gridWorldPos.z
+        );
     }
 
     /// <summary>
