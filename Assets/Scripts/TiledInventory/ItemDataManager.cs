@@ -51,13 +51,8 @@ public class ItemDataManager : Singleton<ItemDataManager>
 
         ItemData itemData = new ItemData(id, name, value, itemQuality, width, height, spritePath);
         itemDataList.Add(itemData);
-        LogParsedItem(itemData);
     }
 
-    private void LogParsedItem(ItemData itemData)
-    {
-        Debug.Log($"物品id: {itemData.id} 物品名称：{itemData.name}");
-    }
     /// <summary>
     /// 解析物品品质
     /// </summary>
@@ -78,7 +73,7 @@ public class ItemDataManager : Singleton<ItemDataManager>
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public ItemData GetItemDataById(int id)
+    public ItemData GetItemDataByID(int id)
     {
         if(itemDataDictionary.ContainsKey(id))
         {

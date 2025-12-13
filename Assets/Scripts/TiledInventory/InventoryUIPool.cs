@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,27 +9,32 @@ using UnityEngine;
 public class InventoryUIPool : Singleton<InventoryUIPool>
 {
     [Header("预制体配置")]
-    [SerializeField] private GameObject gridPrefab;
+    [SerializeField] private GameObject backpackPrefab;
     [SerializeField] private GameObject itemPrefab;
     [SerializeField] private GameObject highlightPrefab;
 
     [Header("对象池配置")]
-    [SerializeField] private int initialGridCount = 2;
     [SerializeField] private int initialItemCount = 50;
     [SerializeField] private int initialHighlightCount = 5;
 
-    // 对象池
-    private Queue<ItemGrid> gridPool;
     private Queue<InventoryItem> itemPool;
     private Queue<InventoryHighlight> highlightPool;
 
     // 活跃对象追踪
-    private List<ItemGrid> activeGrids;
     private List<InventoryItem> activeItems;
     private List<InventoryHighlight> activeHighlights;
 
     // 层级管理器引用
     private InventoryUILayerManager layerManager;
+
+    // 物品容器字典 - 按库存系统名称组织
+    private Dictionary<string, Transform> gridItemContainers;
+
+    // 背包实例（单例）
+    private GameObject backpackInstance;
+    private ItemGrid backpackGrid;
+    // 容器实例字典 - 按容器ID组织
+    private Dictionary<string, GameObject> containerInstances = new Dictionary<string, GameObject>();
 
     private bool isInitialized = false;
 
@@ -36,7 +42,7 @@ public class InventoryUIPool : Singleton<InventoryUIPool>
     {
         Initialize();
     }
-
+    #region 初始化
     /// <summary>
     /// 初始化对象池
     /// </summary>
@@ -51,38 +57,24 @@ public class InventoryUIPool : Singleton<InventoryUIPool>
         }
 
         // 初始化队列和列表
-        gridPool = new Queue<ItemGrid>(initialGridCount);
         itemPool = new Queue<InventoryItem>(initialItemCount);
         highlightPool = new Queue<InventoryHighlight>(initialHighlightCount);
-
-        activeGrids = new List<ItemGrid>(initialGridCount);
+        
         activeItems = new List<InventoryItem>(initialItemCount);
         activeHighlights = new List<InventoryHighlight>(initialHighlightCount);
 
+        // 初始化物品容器字典
+        gridItemContainers = new Dictionary<string, Transform>();
+
+        // 创建背包实例
+        CreateBackpackInstance();
+
         // 预热对象池 - 严格按照配置数量
-        WarmupGrids(initialGridCount);
         WarmupItems(initialItemCount);
         WarmupHighlights(initialHighlightCount);
 
         isInitialized = true;
     }
-
-    /// <summary>
-    /// 预热网格对象池
-    /// </summary>
-    private void WarmupGrids(int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            ItemGrid grid = CreateGridObject();
-            if (grid != null)
-            {
-                grid.gameObject.SetActive(false);
-                gridPool.Enqueue(grid);
-            }
-        }
-    }
-
     /// <summary>
     /// 预热物品对象池
     /// </summary>
@@ -114,75 +106,43 @@ public class InventoryUIPool : Singleton<InventoryUIPool>
             }
         }
     }
-
-    #region 网格对象池
-
-    /// <summary>
-    /// 创建网格实例（内部方法）
-    /// </summary>
-    private ItemGrid CreateGridObject()
-    {
-        if (gridPrefab == null)
-        {
-            return null;
-        }
-
-        // 在GridBase层创建网格
-        Transform parent = layerManager.GetLayerTransform(InventoryUILayerManager.InventoryUILayer.GridBase);
-        GameObject gridObj = Instantiate(gridPrefab, parent);
-        ItemGrid grid = gridObj.GetComponent<ItemGrid>();
-
-        return grid;
-    }
-
-    /// <summary>
-    /// 从池中获取网格
-    /// </summary>
-    public ItemGrid GetGridObject()
-    {
-        if (!isInitialized) Initialize();
-
-        ItemGrid grid;
-
-        if (gridPool.Count > 0)
-        {
-            grid = gridPool.Dequeue();
-        }
-        else
-        {
-            grid = CreateGridObject();
-        }
-
-        if (grid != null)
-        {
-            grid.gameObject.SetActive(true);
-            activeGrids.Add(grid);
-
-            // 确保在正确的层级
-            layerManager.MoveToLayer(
-                grid.GetComponent<RectTransform>(),
-                InventoryUILayerManager.InventoryUILayer.GridBase
-            );
-        }
-
-        return grid;
-    }
-
-    /// <summary>
-    /// 归还网格到池中
-    /// </summary>
-    public void ReturnGridGameObject(ItemGrid grid)
-    {
-        if (grid == null) return;
-
-        grid.gameObject.SetActive(false);
-        activeGrids.Remove(grid);
-        gridPool.Enqueue(grid);
-    }
-
     #endregion
 
     #region 物品对象池
+
+    /// <summary>
+    /// 获取或创建物品容器（按库存系统名称）
+    /// </summary>
+    public Transform GetOrCreateGridItemContainer(ItemGrid grid)
+    {
+        if (grid == null) return null;
+
+        string gridName = grid.gameObject.name;
+
+        // 如果容器已存在，直接返回
+        if (gridItemContainers.TryGetValue(gridName, out Transform container))
+        {
+            return container;
+        }
+
+        // 创建新容器
+        Transform gridItemsLayer = layerManager.GetLayerTransform(InventoryUILayerManager.InventoryUILayer.GridItems);
+        GameObject containerObj = new GameObject(gridName);
+        containerObj.transform.SetParent(gridItemsLayer);
+
+        // 添加RectTransform组件
+        RectTransform rectTransform = containerObj.AddComponent<RectTransform>();
+        rectTransform.anchorMin = Vector2.zero;
+        rectTransform.anchorMax = Vector2.one;
+        rectTransform.offsetMin = Vector2.zero;
+        rectTransform.offsetMax = Vector2.zero;
+        rectTransform.localScale = Vector3.one;
+
+        // 注册到字典
+        gridItemContainers[gridName] = containerObj.transform;
+
+        return containerObj.transform;
+    }
 
     /// <summary>
     /// 创建物品实例（内部方法）
@@ -231,7 +191,6 @@ public class InventoryUIPool : Singleton<InventoryUIPool>
 
         return item;
     }
-
     /// <summary>
     /// 获取物品并设置数据
     /// </summary>
@@ -255,11 +214,9 @@ public class InventoryUIPool : Singleton<InventoryUIPool>
         item.gameObject.SetActive(false);
         activeItems.Remove(item);
 
-        // 移回GridItems层
-        layerManager.MoveToLayer(
-            item.GetComponent<RectTransform>(),
-            InventoryUILayerManager.InventoryUILayer.GridItems
-        );
+        // 移回GridItems层（不放在容器下，因为已经失活）
+        Transform gridItemsLayer = layerManager.GetLayerTransform(InventoryUILayerManager.InventoryUILayer.GridItems);
+        item.transform.SetParent(gridItemsLayer);
 
         itemPool.Enqueue(item);
     }
@@ -395,67 +352,103 @@ public class InventoryUIPool : Singleton<InventoryUIPool>
         );
     }
 
+    /// <summary>
+    /// 将物品返回到网格层（放置时调用）
+    /// </summary>
+    public void MoveItemReturnToGridLayer(InventoryItem item, ItemGrid targetGrid)
+    {
+        if (item == null || layerManager == null) return;
+
+        // 如果指定了目标网格，将物品放到对应的容器下
+        if (targetGrid != null)
+        {
+            Transform container = GetOrCreateGridItemContainer(targetGrid);
+            if (container != null)
+            {
+                Vector3 worldPos = item.transform.position;
+                item.transform.SetParent(container);
+                item.transform.position = worldPos; // 保持世界位置
+                return;
+            }
+        }
+
+        // 如果没有指定网格或容器创建失败，则移动到GridItems层
+        layerManager.MoveToLayerKeepPosition(
+            item.GetComponent<RectTransform>(),
+            InventoryUILayerManager.InventoryUILayer.GridItems
+        );
+    }
+
     #endregion
 
-    #region 清理
+    #region 背包管理
     /// <summary>
-    /// 清理所有对象池
+    /// 创建背包实例
     /// </summary>
-    public void ClearAllPools()
+    private void CreateBackpackInstance()
     {
-        if (!isInitialized) return;
-
-        // 销毁所有池中对象
-        while (gridPool.Count > 0)
+        if (backpackPrefab == null)
         {
-            var grid = gridPool.Dequeue();
-            if (grid != null) Destroy(grid.gameObject);
+            return;
         }
 
-        while (itemPool.Count > 0)
-        {
-            var item = itemPool.Dequeue();
-            if (item != null) Destroy(item.gameObject);
-        }
+        // 在 GridBase 层创建背包
+        Transform gridBaseLayer = layerManager.GetLayerTransform(InventoryUILayerManager.InventoryUILayer.GridBase);
+        backpackInstance = Instantiate(backpackPrefab, gridBaseLayer);
+        backpackInstance.name = InventoryUIManager.Instance.backpackName;
+        // 获取 ItemGrid 组件
+        backpackGrid = backpackInstance.GetComponentInChildren<ItemGrid>();
 
-        while (highlightPool.Count > 0)
-        {
-            var highlight = highlightPool.Dequeue();
-            if (highlight != null) Destroy(highlight.gameObject);
-        }
-
-        // 清理活跃对象列表
-        activeGrids.Clear();
-        activeItems.Clear();
-        activeHighlights.Clear();
+        // 初始状态：隐藏背包
+        backpackInstance.SetActive(false);
 
     }
 
     /// <summary>
-    /// 归还所有活跃对象到池中
+    /// 根据名称获取背包（兼容接口）
     /// </summary>
-    public void ReturnAllToPool()
+    public (ItemGrid grid, GameObject panel) GetBackpackByName(string backpackName)
     {
-        if (!isInitialized) return;
+        if (!isInitialized) Initialize();
 
-        // 归还所有活跃网格
-        for (int i = activeGrids.Count - 1; i >= 0; i--)
+        // 检查背包实例名称是否匹配
+        if (backpackInstance != null && backpackInstance.name.Contains(backpackName))
         {
-            ReturnGridGameObject(activeGrids[i]);
+            return (backpackGrid, backpackInstance);
         }
-
-        // 归还所有活跃物品
-        for (int i = activeItems.Count - 1; i >= 0; i--)
-        {
-            ReturnItemObject(activeItems[i]);
-        }
-
-        // 归还所有活跃高亮
-        for (int i = activeHighlights.Count - 1; i >= 0; i--)
-        {
-            ReturnHighlightObject(activeHighlights[i]);
-        }
+        return (backpackGrid, backpackInstance);
     }
+    
+    #endregion
+
+    #region 容器管理
+    public void CreateContainerInstance(string containerID, GameObject containerPrefab)
+    {
+        if (containerPrefab == null)
+        {
+            return;
+        }
+        if(!containerInstances.ContainsKey(containerID))
+        {
+            Transform gridBaseLayer = layerManager.GetLayerTransform(InventoryUILayerManager.InventoryUILayer.GridBase);
+            GameObject containerInstance = Instantiate(containerPrefab, gridBaseLayer);
+            containerInstance.name = containerID;
+            containerInstance.SetActive(false);
+            containerInstances[containerID] = containerInstance;
+        }
+
+    }
+
+    internal (ItemGrid grid, GameObject panel) GetContainerByName(string currentOpenContainerID)
+    {
+        if (containerInstances.TryGetValue(currentOpenContainerID, out GameObject containerInstance))
+        {
+            ItemGrid containerGrid = containerInstance.GetComponentInChildren<ItemGrid>();
+            return (containerGrid, containerInstance);
+        }
+        return (null, null);
+    }
+
 
     #endregion
 }

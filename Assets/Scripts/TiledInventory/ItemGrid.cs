@@ -16,11 +16,11 @@ public class ItemGrid : MonoBehaviour
     private static float simpleTileHeight; // 单个tile的高度
     [SerializeField] private int gridSizeWidth = 3;
     [SerializeField] private int gridSizeHeight = 3;
-    private Vector2 positionOnTheGrid = new Vector2();
-    private Vector2Int tileGridPosition = new Vector2Int();
-    private InventoryItem[,] inventoryItemSlot;
-    private RectTransform rectTransform;
-    private UnityEngine.UI.Image image;
+    private Vector2 positionOnTheGrid = new Vector2(); // 鼠标在rect上的位置
+    private Vector2Int tileGridPosition = new Vector2Int(); // 鼠标在tile上的位置
+    private InventoryItem[,] inventoryItemSlot; // 二维数组存储物品引用
+    private RectTransform rectTransform; // 网格的RectTransform
+    private UnityEngine.UI.Image image; // 网格的图片组件
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -239,28 +239,6 @@ public class ItemGrid : MonoBehaviour
         return true;
     }
 
-
-
-
-    public void LogGridItemInfo(Vector2Int tileGridPosition)
-    {
-        if(inventoryItemSlot[tileGridPosition.x, tileGridPosition.y] != null)
-        {
-            Debug.Log(
-                "物品名称：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].itemData.name
-                + " 物品宽度：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].Width
-                + " 物品高度：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].Height
-                + " 物品价值：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].itemData.value
-                + " 物品品质：" + inventoryItemSlot[tileGridPosition.x, tileGridPosition.y].itemData.quality
-                );
-        }
-        else
-        {
-            Debug.Log("无物品");
-        }
-    }
-
-
     public static float GetSimpleTileWidth()
     {
         return simpleTileWidth;
@@ -270,7 +248,7 @@ public class ItemGrid : MonoBehaviour
         return simpleTileHeight;
     }
 
-    internal InventoryItem GetItem(int x, int y)
+    public InventoryItem GetItem(int x, int y)
     {
         return inventoryItemSlot[x, y];
     }

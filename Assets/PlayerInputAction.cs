@@ -33,7 +33,7 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
                     ""id"": ""52f2372f-90ee-4ba1-bf07-d5b9b06538ff"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": true
                 },
                 {
@@ -114,6 +114,134 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Inventory"",
+            ""id"": ""c0ea789a-7f44-444a-8cea-c891501c9b5c"",
+            ""actions"": [
+                {
+                    ""name"": ""Backpack"",
+                    ""type"": ""Button"",
+                    ""id"": ""44ce1e1a-06cf-4c0e-9896-cda00b137dcf"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CloseContainer"",
+                    ""type"": ""Button"",
+                    ""id"": ""8e4e71f4-8eca-4861-9db9-29ce1220791b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OpenContainer"",
+                    ""type"": ""Button"",
+                    ""id"": ""db8ed8dc-dfe1-413d-8dc1-7522e17eb249"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RotateItem"",
+                    ""type"": ""Button"",
+                    ""id"": ""26069034-4cb4-44d6-a83a-f85f0e8d5aee"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""InsertRandomItem"",
+                    ""type"": ""Button"",
+                    ""id"": ""7b09ae33-8ccb-4eeb-bd81-bb879ebc79af"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LeftMouse"",
+                    ""type"": ""Button"",
+                    ""id"": ""01e2b246-1c4a-4a7b-aafd-7067fc4f6624"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""804412f4-afa6-4172-a9de-da6ce77d4127"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Backpack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f1bb20c7-8956-4699-a01e-6b6a4999143f"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseContainer"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb4b4e57-ef80-4188-b099-123bb5a64344"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenContainer"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""39216358-174a-4cd9-8d0f-444ccc601c36"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6b33cecc-2f29-40ad-978a-2561e7ac248b"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InsertRandomItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b74f842a-0748-4013-9132-ef8cf3124fa9"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftMouse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -122,11 +250,20 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
         m_Movement_Move = m_Movement.FindAction("Move", throwIfNotFound: true);
         m_Movement_Shoot = m_Movement.FindAction("Shoot", throwIfNotFound: true);
+        // Inventory
+        m_Inventory = asset.FindActionMap("Inventory", throwIfNotFound: true);
+        m_Inventory_Backpack = m_Inventory.FindAction("Backpack", throwIfNotFound: true);
+        m_Inventory_CloseContainer = m_Inventory.FindAction("CloseContainer", throwIfNotFound: true);
+        m_Inventory_OpenContainer = m_Inventory.FindAction("OpenContainer", throwIfNotFound: true);
+        m_Inventory_RotateItem = m_Inventory.FindAction("RotateItem", throwIfNotFound: true);
+        m_Inventory_InsertRandomItem = m_Inventory.FindAction("InsertRandomItem", throwIfNotFound: true);
+        m_Inventory_LeftMouse = m_Inventory.FindAction("LeftMouse", throwIfNotFound: true);
     }
 
     ~@PlayerInputAction()
     {
         UnityEngine.Debug.Assert(!m_Movement.enabled, "This will cause a leak and performance issues, PlayerInputAction.Movement.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Inventory.enabled, "This will cause a leak and performance issues, PlayerInputAction.Inventory.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -238,9 +375,104 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         }
     }
     public MovementActions @Movement => new MovementActions(this);
+
+    // Inventory
+    private readonly InputActionMap m_Inventory;
+    private List<IInventoryActions> m_InventoryActionsCallbackInterfaces = new List<IInventoryActions>();
+    private readonly InputAction m_Inventory_Backpack;
+    private readonly InputAction m_Inventory_CloseContainer;
+    private readonly InputAction m_Inventory_OpenContainer;
+    private readonly InputAction m_Inventory_RotateItem;
+    private readonly InputAction m_Inventory_InsertRandomItem;
+    private readonly InputAction m_Inventory_LeftMouse;
+    public struct InventoryActions
+    {
+        private @PlayerInputAction m_Wrapper;
+        public InventoryActions(@PlayerInputAction wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Backpack => m_Wrapper.m_Inventory_Backpack;
+        public InputAction @CloseContainer => m_Wrapper.m_Inventory_CloseContainer;
+        public InputAction @OpenContainer => m_Wrapper.m_Inventory_OpenContainer;
+        public InputAction @RotateItem => m_Wrapper.m_Inventory_RotateItem;
+        public InputAction @InsertRandomItem => m_Wrapper.m_Inventory_InsertRandomItem;
+        public InputAction @LeftMouse => m_Wrapper.m_Inventory_LeftMouse;
+        public InputActionMap Get() { return m_Wrapper.m_Inventory; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(InventoryActions set) { return set.Get(); }
+        public void AddCallbacks(IInventoryActions instance)
+        {
+            if (instance == null || m_Wrapper.m_InventoryActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_InventoryActionsCallbackInterfaces.Add(instance);
+            @Backpack.started += instance.OnBackpack;
+            @Backpack.performed += instance.OnBackpack;
+            @Backpack.canceled += instance.OnBackpack;
+            @CloseContainer.started += instance.OnCloseContainer;
+            @CloseContainer.performed += instance.OnCloseContainer;
+            @CloseContainer.canceled += instance.OnCloseContainer;
+            @OpenContainer.started += instance.OnOpenContainer;
+            @OpenContainer.performed += instance.OnOpenContainer;
+            @OpenContainer.canceled += instance.OnOpenContainer;
+            @RotateItem.started += instance.OnRotateItem;
+            @RotateItem.performed += instance.OnRotateItem;
+            @RotateItem.canceled += instance.OnRotateItem;
+            @InsertRandomItem.started += instance.OnInsertRandomItem;
+            @InsertRandomItem.performed += instance.OnInsertRandomItem;
+            @InsertRandomItem.canceled += instance.OnInsertRandomItem;
+            @LeftMouse.started += instance.OnLeftMouse;
+            @LeftMouse.performed += instance.OnLeftMouse;
+            @LeftMouse.canceled += instance.OnLeftMouse;
+        }
+
+        private void UnregisterCallbacks(IInventoryActions instance)
+        {
+            @Backpack.started -= instance.OnBackpack;
+            @Backpack.performed -= instance.OnBackpack;
+            @Backpack.canceled -= instance.OnBackpack;
+            @CloseContainer.started -= instance.OnCloseContainer;
+            @CloseContainer.performed -= instance.OnCloseContainer;
+            @CloseContainer.canceled -= instance.OnCloseContainer;
+            @OpenContainer.started -= instance.OnOpenContainer;
+            @OpenContainer.performed -= instance.OnOpenContainer;
+            @OpenContainer.canceled -= instance.OnOpenContainer;
+            @RotateItem.started -= instance.OnRotateItem;
+            @RotateItem.performed -= instance.OnRotateItem;
+            @RotateItem.canceled -= instance.OnRotateItem;
+            @InsertRandomItem.started -= instance.OnInsertRandomItem;
+            @InsertRandomItem.performed -= instance.OnInsertRandomItem;
+            @InsertRandomItem.canceled -= instance.OnInsertRandomItem;
+            @LeftMouse.started -= instance.OnLeftMouse;
+            @LeftMouse.performed -= instance.OnLeftMouse;
+            @LeftMouse.canceled -= instance.OnLeftMouse;
+        }
+
+        public void RemoveCallbacks(IInventoryActions instance)
+        {
+            if (m_Wrapper.m_InventoryActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IInventoryActions instance)
+        {
+            foreach (var item in m_Wrapper.m_InventoryActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_InventoryActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public InventoryActions @Inventory => new InventoryActions(this);
     public interface IMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+    }
+    public interface IInventoryActions
+    {
+        void OnBackpack(InputAction.CallbackContext context);
+        void OnCloseContainer(InputAction.CallbackContext context);
+        void OnOpenContainer(InputAction.CallbackContext context);
+        void OnRotateItem(InputAction.CallbackContext context);
+        void OnInsertRandomItem(InputAction.CallbackContext context);
+        void OnLeftMouse(InputAction.CallbackContext context);
     }
 }

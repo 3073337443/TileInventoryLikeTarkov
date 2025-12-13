@@ -29,4 +29,17 @@ public class GridInteract : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     {
         inventoryController.SelectedItemGrid = null;
     }
+    private void OnDisable()
+    {
+        if (inventoryController == null) return;
+
+        // 当 Grid 被禁用时，处理手上拿着的物品
+        inventoryController.ReturnHeldItemToGrid(itemGrid);
+
+        // 清除 Grid 引用
+        if (inventoryController.SelectedItemGrid == itemGrid)
+        {
+            inventoryController.SelectedItemGrid = null;
+        }
+    }
 }

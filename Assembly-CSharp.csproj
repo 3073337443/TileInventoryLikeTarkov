@@ -64,18 +64,24 @@
     <Analyzer Include="E:\unity\2022.3.51f1c1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\TiledInventory\PlayerInteraction.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\ItemData.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\ContainerInteractable.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\ItemGrid.cs" />
     <Compile Include="Assets\Scripts\other\ABtest.cs" />
     <Compile Include="Assets\Scripts\other\CubeHealth.cs" />
     <Compile Include="Assets\Scripts\other\Singleton.cs" />
     <Compile Include="Assets\Scripts\other\Movement.cs" />
     <Compile Include="Assets\Scripts\other\BuildBox.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\InventoryInputHandler.cs" />
     <Compile Include="Assets\Scripts\other\ShootBullet.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\InventoryHighlight.cs" />
     <Compile Include="Assets\PlayerInputAction.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\InventoryUILayerManager.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\InventoryItem.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\InventoryUIManager.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\InventoryUIPool.cs" />
     <Compile Include="Assets\Scripts\other\Test.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\ItemDataManager.cs" />
     <Compile Include="Assets\Scripts\other\CharacterCollision.cs" />

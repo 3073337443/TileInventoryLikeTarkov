@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class InventoryController : MonoBehaviour
 {
-    private ItemGrid selectedItemGrid;
+    private ItemGrid selectedItemGrid; // 当前选中的网格
     public ItemGrid SelectedItemGrid
     {
         get => selectedItemGrid;
@@ -16,11 +16,11 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    private InventoryItem selectedItem;
-    private InventoryItem overlarpItem;
-    private InventoryItem itemToHighlight;
-    private RectTransform rectTransform;
-    private Vector2Int oldPositionOnGrid;
+    private InventoryItem selectedItem; // 当前拖拽的物品
+    private InventoryItem overlarpItem; // 重叠的物品
+    private InventoryItem itemToHighlight; // 高亮物品
+    private RectTransform rectTransform; // 拖拽物品的RectTransform
+    private Vector2Int oldPositionOnGrid; // 上一次在网格中的位置
 
     // 对象池引用
     private InventoryUIPool uiPool;
@@ -48,6 +48,7 @@ public class InventoryController : MonoBehaviour
 
     private void Update()
     {
+        // 拖拽物品跟随鼠标
         DragSelectItem();
 
         if (selectedItemGrid == null)
@@ -58,75 +59,77 @@ public class InventoryController : MonoBehaviour
             }
             return;
         }
-
-        HandleInput();
-        HandleHighlight();
-    }
-
-    /// <summary>
-    /// 处理输入
-    /// </summary>
-    private void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            InsertRandomItem();
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            RotateItem();
-        }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            CreateRandomItem();
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            CreateAllItem();
-        }
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            DeleteItem();
-        }
         if (Input.GetMouseButtonDown(0))
         {
             LeftMousePressed();
         }
-        if (Input.GetMouseButtonDown(1))
-        {
-            Vector2Int tileGridPosition = selectedItemGrid.GetTileGridPosition(Input.mousePosition);
-            LogGridInfo(tileGridPosition);
-        }
+        // 处理高亮
+        HandleHighlight();
     }
 
-    private void RotateItem()
+    #region 物品操作
+    /// <summary>
+    /// 鼠标左键按下
+    /// </summary>
+    private void LeftMousePressed()
+    {
+        Vector2Int tileGridPosition = GetTileGridPosition();
+
+        if (selectedItem != null)
+        {
+            PlaceItem(tileGridPosition);
+        }
+        else
+        {
+            PickUpItem(tileGridPosition);
+        }
+    }    
+    
+    /// <summary>
+    /// 旋转物品
+    /// </summary>
+    public void RotateItem()
     {
         if (selectedItem == null) return;
         selectedItem.Rotated();
-    }
+    }   
 
-    private void InsertRandomItem()
-    {
-        if (selectedItemGrid == null) return;
-
-        CreateRandomItem();
-        InventoryItem itemToInsert = selectedItem;
-        selectedItem = null;
-        InsertItem(itemToInsert);
-    }
-
+    /// <summary>
+    /// 向指定网格插入物品
+    /// </summary>
+    /// <param name="itemToInsert"></param>
     private void InsertItem(InventoryItem itemToInsert)
     {
         if (itemToInsert == null) return;
-
+        // 查找空闲位置
         Vector2Int? posOnGrid = selectedItemGrid.FindSpaceForObject(itemToInsert);
         if (posOnGrid == null)
         {
             uiPool.ReturnItemObject(itemToInsert);
             return;
         }
+        uiPool.MoveItemReturnToGridLayer(itemToInsert, selectedItemGrid);
         selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
     }
+    #endregion
+
+    /// <summary>
+    /// 获取鼠标在tile上的位置
+    /// </summary>
+    /// <returns></returns>
+    private Vector2Int GetTileGridPosition()
+    {
+        Vector2 position = Input.mousePosition;
+        if (selectedItem != null)
+        {
+            position.x -= (selectedItem.Width - 1) * ItemGrid.GetSimpleTileWidth() / 2;
+            position.y += (selectedItem.Height - 1) * ItemGrid.GetSimpleTileHeight() / 2;
+        }
+        return selectedItemGrid.GetTileGridPosition(position);
+    }
+
+
+
 
     /// <summary>
     /// 处理高亮
@@ -178,34 +181,6 @@ public class InventoryController : MonoBehaviour
     }
 
     /// <summary>
-    /// 鼠标左键按下
-    /// </summary>
-    private void LeftMousePressed()
-    {
-        Vector2Int tileGridPosition = GetTileGridPosition();
-
-        if (selectedItem != null)
-        {
-            PlaceItem(tileGridPosition);
-        }
-        else
-        {
-            PickUpItem(tileGridPosition);
-        }
-    }
-
-    private Vector2Int GetTileGridPosition()
-    {
-        Vector2 position = Input.mousePosition;
-        if (selectedItem != null)
-        {
-            position.x -= (selectedItem.Width - 1) * ItemGrid.GetSimpleTileWidth() / 2;
-            position.y += (selectedItem.Height - 1) * ItemGrid.GetSimpleTileHeight() / 2;
-        }
-        return selectedItemGrid.GetTileGridPosition(position);
-    }
-
-    /// <summary>
     /// 拾取物品
     /// </summary>
     private void PickUpItem(Vector2Int tileGridPosition)
@@ -215,6 +190,7 @@ public class InventoryController : MonoBehaviour
         {
             rectTransform = selectedItem.GetComponent<RectTransform>();
             uiPool.MoveItemToDragLayer(selectedItem);
+            rectTransform.SetAsLastSibling();
         }
     }
 
@@ -228,26 +204,63 @@ public class InventoryController : MonoBehaviour
 
         if (complete)
         {
+            rectTransform.SetAsLastSibling();
+            uiPool.MoveItemReturnToGridLayer(selectedItem, selectedItemGrid);
             selectedItem = null;
             if (overlarpItem != null)
             {
                 selectedItem = overlarpItem;
+                uiPool.MoveItemToDragLayer(selectedItem);
                 overlarpItem = null;
                 rectTransform = selectedItem.GetComponent<RectTransform>();
-                uiPool.MoveItemToDragLayer(selectedItem);
             }
+
         }
     }
 
     /// <summary>
-    /// 删除物品
+    /// 将手上拿着的物品放回指定网格的空闲位置
     /// </summary>
-    private void DeleteItem()
+    /// <param name="targetGrid">目标网格</param>
+    public void ReturnHeldItemToGrid(ItemGrid targetGrid)
     {
-        if (selectedItem == null) return;
+        if (selectedItem == null || targetGrid == null) return;
 
-        uiPool.ReturnItemObject(selectedItem);
+        // 查找空闲位置
+        Vector2Int? freePos = targetGrid.FindSpaceForObject(selectedItem);
+
+        if (freePos != null)
+        {
+            // 放置物品到空闲位置
+            targetGrid.PlaceItem(selectedItem, freePos.Value.x, freePos.Value.y);
+            uiPool.MoveItemReturnToGridLayer(selectedItem, targetGrid);
+        }
+        else
+        {
+            // 没有空间则归还到对象池
+            uiPool.ReturnItemObject(selectedItem);
+        }
+
+        // 清除引用
         selectedItem = null;
+        rectTransform = null;
+
+        // 隐藏高亮
+        if (inventoryHighlight != null)
+        {
+            inventoryHighlight.Show(false);
+        }
+    }
+
+    #region 测试方法
+    public void InsertRandomItem()
+    {
+        if (selectedItemGrid == null) return;
+
+        CreateRandomItem();
+        InventoryItem itemToInsert = selectedItem;
+        selectedItem = null;
+        InsertItem(itemToInsert);
     }
 
     /// <summary>
@@ -266,28 +279,5 @@ public class InventoryController : MonoBehaviour
         selectedItem = inventoryItem;
         rectTransform = inventoryItem.GetComponent<RectTransform>();
     }
-
-    /// <summary>
-    /// 创建所有物品
-    /// </summary>
-    private void CreateAllItem()
-    {
-        if (selectedItemGrid == null) return;
-
-        for (int i = 0; i < ItemDataManager.Instance.itemDataList.Count; i++)
-        {
-            InventoryItem inventoryItem = uiPool.GetItemGamObject(ItemDataManager.Instance.itemDataList[i]);
-            if (inventoryItem != null)
-            {
-                InsertItem(inventoryItem);
-            }
-        }
-
-        selectedItem = null;
-    }
-
-    private void LogGridInfo(Vector2Int tileGridPosition)
-    {
-        selectedItemGrid.LogGridItemInfo(tileGridPosition);
-    }
+    #endregion
 }

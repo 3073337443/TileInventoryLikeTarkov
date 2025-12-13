@@ -5,6 +5,9 @@ using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 物品
+/// </summary>
 public class InventoryItem : MonoBehaviour
 {
     public ItemData itemData;
@@ -27,13 +30,19 @@ public class InventoryItem : MonoBehaviour
     public int onGridPosY;
     public bool rotated = false;
 
+    /// <summary>
+    /// 旋转物品
+    /// </summary>
     internal void Rotated()
     {
         rotated = !rotated;
         RectTransform rectTransform = GetComponent<RectTransform>();
         rectTransform.rotation = Quaternion.Euler(0, 0, rotated ? 90 : 0);
     }
-
+    /// <summary>
+    /// 设置物品数据
+    /// </summary>
+    /// <param name="itemData"></param>
     internal void Set(ItemData itemData)
     {
         this.itemData = itemData;
