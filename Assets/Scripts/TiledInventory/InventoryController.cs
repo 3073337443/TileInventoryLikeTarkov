@@ -1,10 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
 /// 库存网格互动控制器
 /// 使用对象池模式管理物品
 /// </summary>
-public class InventoryController : MonoBehaviour
+public class InventoryController : Singleton<InventoryController>
 {
     private ItemGrid selectedItemGrid; // 当前选中的网格
     public ItemGrid SelectedItemGrid
@@ -98,18 +99,18 @@ public class InventoryController : MonoBehaviour
     /// 向指定网格插入物品
     /// </summary>
     /// <param name="itemToInsert"></param>
-    private void InsertItem(InventoryItem itemToInsert)
+    private void InsertItem(InventoryItem itemToInsert, ItemGrid targetGrid)
     {
         if (itemToInsert == null) return;
         // 查找空闲位置
-        Vector2Int? posOnGrid = selectedItemGrid.FindSpaceForObject(itemToInsert);
+        Vector2Int? posOnGrid = targetGrid.FindSpaceForObject(itemToInsert);
         if (posOnGrid == null)
         {
             uiPool.ReturnItemObject(itemToInsert);
             return;
         }
-        uiPool.MoveItemReturnToGridLayer(itemToInsert, selectedItemGrid);
-        selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
+        uiPool.MoveItemReturnToGridLayer(itemToInsert, targetGrid);
+        targetGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
     }
     #endregion
 
@@ -127,9 +128,6 @@ public class InventoryController : MonoBehaviour
         }
         return selectedItemGrid.GetTileGridPosition(position);
     }
-
-
-
 
     /// <summary>
     /// 处理高亮
@@ -253,6 +251,9 @@ public class InventoryController : MonoBehaviour
     }
 
     #region 测试方法
+    /// <summary>
+    /// i键添加物品测试方法
+    /// </summary>
     public void InsertRandomItem()
     {
         if (selectedItemGrid == null) return;
@@ -260,9 +261,23 @@ public class InventoryController : MonoBehaviour
         CreateRandomItem();
         InventoryItem itemToInsert = selectedItem;
         selectedItem = null;
-        InsertItem(itemToInsert);
+        InsertItem(itemToInsert, selectedItemGrid);
     }
+    public void InsertRandomItem(ItemGrid targetGrid)
+    {
+        if (targetGrid == null) return;
 
+        InventoryItem inventoryItem = uiPool.GetItemObject();
+        if (inventoryItem == null) return;
+
+        int randomItemID = Random.Range(0, ItemDataManager.Instance.itemDataList.Count);
+        inventoryItem.Set(ItemDataManager.Instance.itemDataList[randomItemID]);
+        uiPool.MoveItemReturnToGridLayer(inventoryItem, targetGrid);
+
+        InsertItem(inventoryItem, targetGrid);
+
+        uiPool.SetGridItemContainerActive(targetGrid, false);
+    }
     /// <summary>
     /// 创建随机物品
     /// </summary>

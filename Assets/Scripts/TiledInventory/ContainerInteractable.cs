@@ -34,7 +34,10 @@ public class ContainerInteractable : MonoBehaviour
     {
         // 创建容器ui实例
         uiPool.CreateContainerInstance(containerID, containerUIPrefab);
+        ItemGrid grid = uiPool.GetContainerGrid(containerID);
+        InventoryController.Instance.InsertRandomItem(grid);
     }
+
 
     public string GetContainerID() => containerID;
 }

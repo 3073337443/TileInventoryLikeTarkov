@@ -143,7 +143,20 @@ public class InventoryUIPool : Singleton<InventoryUIPool>
 
         return containerObj.transform;
     }
-
+    // InventoryUIPool.cs - 新增方法
+    /// <summary>
+    /// 设置网格对应的物品容器活动状态
+    /// </summary>
+    public void SetGridItemContainerActive(ItemGrid targetGrid, bool active)
+    {
+        if (targetGrid == null) return;
+        
+        Transform container = GetOrCreateGridItemContainer(targetGrid);
+        if (container != null)
+        {
+            container.gameObject.SetActive(active);
+        }
+    }
     /// <summary>
     /// 创建物品实例（内部方法）
     /// </summary>
@@ -448,7 +461,15 @@ public class InventoryUIPool : Singleton<InventoryUIPool>
         }
         return (null, null);
     }
-
+    public ItemGrid GetContainerGrid(string containerID)
+    {
+        if (containerInstances.TryGetValue(containerID, out GameObject containerInstance))
+        {
+            ItemGrid containerGrid = containerInstance.GetComponentInChildren<ItemGrid>();
+            return containerGrid;
+        }
+        return null;
+    }
 
     #endregion
 }

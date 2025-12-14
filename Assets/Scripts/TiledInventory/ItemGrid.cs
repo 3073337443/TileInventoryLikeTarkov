@@ -18,21 +18,16 @@ public class ItemGrid : MonoBehaviour
     [SerializeField] private int gridSizeHeight = 3;
     private Vector2 positionOnTheGrid = new Vector2(); // 鼠标在rect上的位置
     private Vector2Int tileGridPosition = new Vector2Int(); // 鼠标在tile上的位置
-    private InventoryItem[,] inventoryItemSlot; // 二维数组存储物品引用
+    public InventoryItem[,] inventoryItemSlot; // 二维数组存储物品引用
     private RectTransform rectTransform; // 网格的RectTransform
     private UnityEngine.UI.Image image; // 网格的图片组件
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         image = GetComponent<UnityEngine.UI.Image>();
-
-    }
-    private void Start()
-    {
         simpleTileWidth = TILE_SIZE_WIDTH / image.pixelsPerUnitMultiplier;
         simpleTileHeight = TILE_SIZE_HEIGHT / image.pixelsPerUnitMultiplier;
         Init(gridSizeWidth, gridSizeHeight);
-        
     }
     /// <summary>
     /// 初始化库存网格

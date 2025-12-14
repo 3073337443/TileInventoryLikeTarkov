@@ -169,16 +169,22 @@ public class InventoryUIManager : Singleton<InventoryUIManager>
 
         isContainerOpen = false;
     }
+    public void SetItemContainerActive(bool isActive)
+    {
+        if (containerContainer == null) return;
+
+        containerContainer.SetActive(isActive);
+    }
     /// <summary>
     /// 设置容器面板活动状态
     /// </summary>
-    /// <param name="v"></param>
-    private void SetContainerActive(bool v)
+    /// <param name="isActive"></param>
+    private void SetContainerActive(bool isActive)
     {
         if (containerPanel == null) return;
 
-        containerPanel.SetActive(v);
-        containerContainer.SetActive(v);
+        containerPanel.SetActive(isActive);
+        containerContainer.SetActive(isActive);
     }
 
     /// <summary>

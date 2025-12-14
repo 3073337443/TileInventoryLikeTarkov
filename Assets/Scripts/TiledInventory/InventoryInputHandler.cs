@@ -17,14 +17,14 @@ public class InventoryInputHandler : MonoBehaviour
     [Header("交互引用")]
     [SerializeField] private PlayerInteraction playerInteraction;
 
-    [Header("库存引用")]
-    [SerializeField] private InventoryController inventoryController;
+    private InventoryController inventoryController;
 
     private InventoryUIManager uiManager;
     private void Awake()
     {
         // 获取引用
         uiManager = InventoryUIManager.Instance;
+        inventoryController = InventoryController.Instance;
 
     }
 
