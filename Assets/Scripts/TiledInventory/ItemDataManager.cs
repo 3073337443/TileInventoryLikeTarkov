@@ -63,7 +63,7 @@ public class ItemDataManager : Singleton<ItemDataManager>
         switch(qualityStr.ToLower())
         {
             case "rare": return Quality.Rare;
-            case "rpic": return Quality.Epic;
+            case "epic": return Quality.Epic;
             case "legendary": return Quality.Legendary;
             case "treasure": return Quality.Treasure;
             default: return Quality.Rare;

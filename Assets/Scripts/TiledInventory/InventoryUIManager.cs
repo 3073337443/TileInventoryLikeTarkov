@@ -155,7 +155,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager>
         {
             return;
         }
-
+        containerGrid.StopSearchAllItems();
         // 隐藏容器面板
         SetContainerActive(false);
 

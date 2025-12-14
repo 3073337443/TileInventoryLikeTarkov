@@ -38,6 +38,7 @@ public class ContainerInteractable : MonoBehaviour
         InventoryController.Instance.InsertRandomItem(grid);
         InventoryController.Instance.InsertRandomItem(grid);
         InventoryController.Instance.InsertRandomItem(grid);
+        InventoryController.Instance.InsertRandomItem(grid);
     }
 
 

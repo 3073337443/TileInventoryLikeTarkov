@@ -154,6 +154,13 @@ public class ItemGrid : MonoBehaviour
                     if(overlarpItem == null)
                     {
                         overlarpItem = inventoryItemSlot[posX + x, posY + y];
+
+                        // 如果重叠物品未完成搜索，不允许交换
+                        if(!overlarpItem.isSearched)
+                        {
+                            overlarpItem = null;
+                            return true;
+                        }
                     }
                     else if(overlarpItem != inventoryItemSlot[posX + x, posY + y])
                     {
@@ -306,7 +313,9 @@ public class ItemGrid : MonoBehaviour
 
         SearchNextItem();
     }
-
+    /// <summary>
+    /// 搜索下一个物品
+    /// </summary>
     private void SearchNextItem()
     {
         if(searchQueue.Count == 0)
@@ -320,6 +329,34 @@ public class ItemGrid : MonoBehaviour
         // 传入回调，搜索完成后继续下一个
         item.StartSearch(OnItemSearchComplete);
     }
+    /// <summary>
+    /// 停止所有物品的搜索并重置进度
+    /// </summary>
+    public void StopSearchAllItems()
+    {
+        // 清空搜索队列
+        searchQueue.Clear();
+        isSearching = false;
+        
+        // 遍历所有物品，停止并重置未完成的搜索
+        HashSet<InventoryItem> processedItems = new HashSet<InventoryItem>();
+        
+        for (int x = 0; x < gridSizeWidth; x++)
+        {
+            for (int y = 0; y < gridSizeHeight; y++)
+            {
+                InventoryItem item = inventoryItemSlot[x, y];
+                if (item != null && !processedItems.Contains(item))
+                {
+                    processedItems.Add(item);
+                    item.StopAndResetSearch();  // 停止并重置
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// 物品搜索完成回调
+    /// </summary>
     private void OnItemSearchComplete()
     {
         SearchNextItem();
