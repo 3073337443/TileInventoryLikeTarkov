@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class ItemDataManager : Singleton<ItemDataManager>
 {
-    public List<ItemData> itemDataList = new List<ItemData>();
+    private List<ItemData> itemDataList = new List<ItemData>();
     private Dictionary<int, ItemData> itemDataDictionary = new Dictionary<int, ItemData>();
 
     void Awake()
@@ -65,6 +65,7 @@ public class ItemDataManager : Singleton<ItemDataManager>
             case "rare": return Quality.Rare;
             case "rpic": return Quality.Epic;
             case "legendary": return Quality.Legendary;
+            case "treasure": return Quality.Treasure;
             default: return Quality.Rare;
         }
     }
@@ -80,6 +81,10 @@ public class ItemDataManager : Singleton<ItemDataManager>
             return itemDataDictionary[id];
         }
         return null;
+    }
+    public int GetItemCount()
+    {
+        return itemDataList.Count;
     }
 }
 [Serializable]

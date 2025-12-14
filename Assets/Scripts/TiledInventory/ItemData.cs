@@ -32,4 +32,5 @@ public enum Quality
     Rare,      // 稀有
     Epic,      // 史诗
     Legendary, // 传说
+    Treasure   // 宝藏
 }

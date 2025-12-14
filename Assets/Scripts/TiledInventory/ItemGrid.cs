@@ -21,6 +21,10 @@ public class ItemGrid : MonoBehaviour
     public InventoryItem[,] inventoryItemSlot; // 二维数组存储物品引用
     private RectTransform rectTransform; // 网格的RectTransform
     private UnityEngine.UI.Image image; // 网格的图片组件
+
+    private Queue<InventoryItem> searchQueue = new Queue<InventoryItem>();
+    private bool isSearching = false;
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -195,6 +199,11 @@ public class ItemGrid : MonoBehaviour
         InventoryItem item = inventoryItemSlot[posX, posY];
         if (item == null) return null;
 
+        if(!item.CanPickUp) 
+        {
+            return null;
+        }
+
         CleanGridReference(item);
 
         return item;
@@ -269,5 +278,50 @@ public class ItemGrid : MonoBehaviour
         }
 
         return null; // 没有找到空间，返回null。
+    }
+
+    /// <summary>
+    /// 通知网格内所有物品开始搜索
+    /// </summary>
+    public void StartSearchAllItems()
+    {
+        if(isSearching) return;
+
+        // 遍历已记录的所有物品（避免重复调用）
+        HashSet<InventoryItem> processedItems = new HashSet<InventoryItem>();
+        searchQueue.Clear();
+
+        for (int x = 0; x < gridSizeWidth; x++)
+        {
+            for (int y = 0; y < gridSizeHeight; y++)
+            {
+                InventoryItem item = inventoryItemSlot[x, y];
+                if (item != null && !processedItems.Contains(item) && !item.isSearched)
+                {
+                    processedItems.Add(item);
+                    searchQueue.Enqueue(item);
+                }
+            }
+        }
+
+        SearchNextItem();
+    }
+
+    private void SearchNextItem()
+    {
+        if(searchQueue.Count == 0)
+        {
+            isSearching = false;
+            return;
+        }
+
+        isSearching = true;
+        InventoryItem item = searchQueue.Dequeue();
+        // 传入回调，搜索完成后继续下一个
+        item.StartSearch(OnItemSearchComplete);
+    }
+    private void OnItemSearchComplete()
+    {
+        SearchNextItem();
     }
 }

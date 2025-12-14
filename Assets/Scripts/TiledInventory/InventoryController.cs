@@ -189,6 +189,8 @@ public class InventoryController : Singleton<InventoryController>
             rectTransform = selectedItem.GetComponent<RectTransform>();
             uiPool.MoveItemToDragLayer(selectedItem);
             rectTransform.SetAsLastSibling();
+
+            selectedItem.SetDragTransparency(true);
         }
     }
 
@@ -202,6 +204,8 @@ public class InventoryController : Singleton<InventoryController>
 
         if (complete)
         {
+            selectedItem.SetDragTransparency(false);
+
             rectTransform.SetAsLastSibling();
             uiPool.MoveItemReturnToGridLayer(selectedItem, selectedItemGrid);
             selectedItem = null;
@@ -211,6 +215,8 @@ public class InventoryController : Singleton<InventoryController>
                 uiPool.MoveItemToDragLayer(selectedItem);
                 overlarpItem = null;
                 rectTransform = selectedItem.GetComponent<RectTransform>();
+
+                selectedItem.SetDragTransparency(true);
             }
 
         }
@@ -223,7 +229,7 @@ public class InventoryController : Singleton<InventoryController>
     public void ReturnHeldItemToGrid(ItemGrid targetGrid)
     {
         if (selectedItem == null || targetGrid == null) return;
-
+        selectedItem.SetDragTransparency(false);
         // 查找空闲位置
         Vector2Int? freePos = targetGrid.FindSpaceForObject(selectedItem);
 
@@ -270,8 +276,8 @@ public class InventoryController : Singleton<InventoryController>
         InventoryItem inventoryItem = uiPool.GetItemObject();
         if (inventoryItem == null) return;
 
-        int randomItemID = Random.Range(0, ItemDataManager.Instance.itemDataList.Count);
-        inventoryItem.Set(ItemDataManager.Instance.itemDataList[randomItemID]);
+        int randomItemID = Random.Range(0, ItemDataManager.Instance.GetItemCount());
+        inventoryItem.Set(ItemDataManager.Instance.GetItemDataByID(randomItemID));
         uiPool.MoveItemReturnToGridLayer(inventoryItem, targetGrid);
 
         InsertItem(inventoryItem, targetGrid);
@@ -286,8 +292,8 @@ public class InventoryController : Singleton<InventoryController>
         InventoryItem inventoryItem = uiPool.GetItemObject();
         if (inventoryItem == null) return;
 
-        int randomItemID = Random.Range(0, ItemDataManager.Instance.itemDataList.Count);
-        inventoryItem.Set(ItemDataManager.Instance.itemDataList[randomItemID]);
+        int randomItemID = Random.Range(0, ItemDataManager.Instance.GetItemCount());
+        inventoryItem.Set(ItemDataManager.Instance.GetItemDataByID(randomItemID));
 
         uiPool.MoveItemToDragLayer(inventoryItem);
 

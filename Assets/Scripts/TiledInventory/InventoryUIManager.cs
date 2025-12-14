@@ -126,28 +126,20 @@ public class InventoryUIManager : Singleton<InventoryUIManager>
     /// <param name="containerID"></param>
     public void OpenContainer(string containerID)
     {
-        if (isContainerOpen)
-        {
-            return;
-        }
+        if (isContainerOpen) return;
 
-        if (containerID == null)
-        {
-            return;
-        }
+        if (containerID == null) return;
+
 
         GetContainer(containerID);
 
-        if (containerGrid == null || containerPanel == null)
-        {
-            return;
-        }
-
+        if (containerGrid == null || containerPanel == null) return;
+        
         // 显示容器面板
         SetContainerActive(true);
-
         isContainerOpen = true;
 
+        containerGrid.StartSearchAllItems();
     }
     /// <summary>
     /// 关闭容器
