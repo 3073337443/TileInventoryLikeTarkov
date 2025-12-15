@@ -46,10 +46,10 @@ public class ItemDataManager : Singleton<ItemDataManager>
         int width = itemJsonData.width;
         int height = itemJsonData.height;
         string spritePath = itemJsonData.spritePath;
-
+        float rarity = itemJsonData.rarity;
         Quality itemQuality = ParseQuality(qualityStr);
 
-        ItemData itemData = new ItemData(id, name, value, itemQuality, width, height, spritePath);
+        ItemData itemData = new ItemData(id, name, value, itemQuality, width, height, spritePath, rarity);
         itemDataList.Add(itemData);
     }
 
@@ -82,6 +82,27 @@ public class ItemDataManager : Singleton<ItemDataManager>
         }
         return null;
     }
+    /// <summary>
+    /// 根据品质返回物品数据
+    /// </summary>
+    /// <param name="quality"></param>
+    /// <returns></returns>
+    public List<ItemData> GetItemsByQuality(Quality quality)
+    {
+        return itemDataList.FindAll(item => item.quality == quality);
+    }
+    /// <summary>
+    /// 获取所有物品数据
+    /// </summary>
+    /// <returns></returns>
+    public List<ItemData> GetAllItems()
+    {
+        return itemDataList;
+    }
+    /// <summary>
+    /// 获取所有物品数据
+    /// </summary>
+    /// <returns></returns>
     public int GetItemCount()
     {
         return itemDataList.Count;
@@ -102,5 +123,6 @@ public class ItemJsonData
     public string qualityStr;
     public int width = 1;
     public int height = 1;
+    public float rarity;
     public string spritePath;
 }

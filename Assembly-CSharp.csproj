@@ -66,8 +66,10 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\TiledInventory\PlayerInteraction.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\ItemData.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\ItemGeneration\VirtualGrid.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\ContainerInteractable.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\ItemGrid.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\ItemGeneration\MarkovItemGenerator.cs" />
     <Compile Include="Assets\Scripts\other\ABtest.cs" />
     <Compile Include="Assets\Scripts\other\CubeHealth.cs" />
     <Compile Include="Assets\Scripts\other\Singleton.cs" />
@@ -85,8 +87,10 @@
     <Compile Include="Assets\Scripts\other\Test.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\ItemDataManager.cs" />
     <Compile Include="Assets\Scripts\other\CharacterCollision.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\ItemGeneration\ContainerGenerationData.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\InventoryController.cs" />
     <Compile Include="Assets\Scripts\other\Bullet.cs" />
+    <Compile Include="Assets\Scripts\TiledInventory\ItemGeneration\GenerationConfig.cs" />
     <Compile Include="Assets\Scripts\TiledInventory\GridInteract.cs" />
   </ItemGroup>
   <ItemGroup>

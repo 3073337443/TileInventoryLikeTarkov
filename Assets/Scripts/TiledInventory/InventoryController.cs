@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -7,6 +8,10 @@ using UnityEngine;
 /// </summary>
 public class InventoryController : Singleton<InventoryController>
 {
+    [Header("物品生成配置")]
+    [SerializeField] private ContainerGenerationData generationData;
+    private MarkovItemGenerator itemGenerator;
+
     private ItemGrid selectedItemGrid; // 当前选中的网格
     public ItemGrid SelectedItemGrid
     {
@@ -35,6 +40,11 @@ public class InventoryController : Singleton<InventoryController>
 
         // 从对象池获取高亮
         inventoryHighlight = uiPool.GetHighlightObject();
+
+        if(generationData != null)
+        {
+            itemGenerator = new MarkovItemGenerator(generationData, ItemDataManager.Instance);
+        }
     }
 
     private void OnDestroy()
@@ -282,6 +292,31 @@ public class InventoryController : Singleton<InventoryController>
 
         InsertItem(inventoryItem, targetGrid);
 
+        uiPool.SetGridItemContainerActive(targetGrid, false);
+    }
+    /// <summary>
+    /// 为容器生成物品（使用马尔科夫链）
+    /// </summary>
+    public void GenerateItemsForContainer(ItemGrid targetGrid, ContainerType containerType)
+    {
+        if (targetGrid == null || itemGenerator == null) 
+        {
+            Debug.LogWarning("无法生成物品：targetGrid或itemGenerator为空");
+            return;
+        }
+        
+        List<ItemData> itemsToGenerate = itemGenerator.GenerateItems(containerType, targetGrid.GridWidth, targetGrid.GridHeight);
+        
+        foreach (ItemData itemData in itemsToGenerate)
+        {
+            InventoryItem inventoryItem = uiPool.GetItemObject();
+            if (inventoryItem == null) continue;
+            
+            inventoryItem.Set(itemData);
+            uiPool.MoveItemReturnToGridLayer(inventoryItem, targetGrid);
+            InsertItem(inventoryItem, targetGrid);
+        }
+        
         uiPool.SetGridItemContainerActive(targetGrid, false);
     }
     /// <summary>

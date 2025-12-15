@@ -9,6 +9,7 @@ using UnityEngine;
 public class ContainerInteractable : MonoBehaviour
 {
     [SerializeField] private GameObject containerUIPrefab; // 容器UI预制体
+    [SerializeField] private ContainerType containerType; // 容器类型
     private InventoryUIPool uiPool;
     private string containerID; // 容器唯一标识
     private bool isInteractable = true; // 是否可交互
@@ -35,12 +36,19 @@ public class ContainerInteractable : MonoBehaviour
         // 创建容器ui实例
         uiPool.CreateContainerInstance(containerID, containerUIPrefab);
         ItemGrid grid = uiPool.GetContainerGrid(containerID);
-        InventoryController.Instance.InsertRandomItem(grid);
-        InventoryController.Instance.InsertRandomItem(grid);
-        InventoryController.Instance.InsertRandomItem(grid);
-        InventoryController.Instance.InsertRandomItem(grid);
+        // InventoryController.Instance.InsertRandomItem(grid);
+        // InventoryController.Instance.InsertRandomItem(grid);
+        // InventoryController.Instance.InsertRandomItem(grid);
+        // InventoryController.Instance.InsertRandomItem(grid);
+        InventoryController.Instance.GenerateItemsForContainer(grid, containerType);
     }
 
 
     public string GetContainerID() => containerID;
+    public ContainerType GetContainerType() => containerType;
+}
+public enum ContainerType
+{
+    chest,
+    precious,
 }

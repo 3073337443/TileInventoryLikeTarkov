@@ -7,7 +7,7 @@ public class PlayerInteraction : MonoBehaviour
 {
     private Transform playerTransform;
     private ContainerInteractable nearestContainer;
-    private float detectionRadius = 3f;
+    private float detectionRadius = 1f;
     [SerializeField]private LayerMask containerLayer;
 
     private void Awake()

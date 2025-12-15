@@ -24,7 +24,8 @@ public class ItemGrid : MonoBehaviour
 
     private Queue<InventoryItem> searchQueue = new Queue<InventoryItem>();
     private bool isSearching = false;
-
+    public int GridWidth => gridSizeWidth;
+    public int GridHeight => gridSizeHeight;
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();

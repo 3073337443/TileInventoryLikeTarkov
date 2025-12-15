@@ -11,8 +11,9 @@ public class ItemData
     public int width = 1;
     public int height = 1;
     public string spritePath;
+    public float rarity;
 
-    public ItemData(int id, string name, int value, Quality quality, int width, int height, string spritePath)
+    public ItemData(int id, string name, int value, Quality quality, int width, int height, string spritePath, float rarity)
     {
         this.id = id;
         this.name = name;
@@ -21,6 +22,7 @@ public class ItemData
         this.width = width;
         this.height = height;
         this.spritePath = spritePath;
+        this.rarity = rarity;
     }
 
 }
