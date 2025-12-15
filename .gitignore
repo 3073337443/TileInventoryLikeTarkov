@@ -70,3 +70,4 @@ crashlytics-build.properties
 *.private
 *.private.meta
 
+Doc/
